@@ -1,0 +1,55 @@
+<!doctype html>
+<html class="no-js" lang="" xmlns="">
+
+<head>
+    <meta charset="utf-8">
+    <title>Uppercase</title>
+
+    <script>
+        function load(url) {
+            fetch(url)
+                .then(response => response.json()
+                    .then(value => {
+                        const response = value.response;
+
+                        if (response) {
+                            alert(response);
+                        } else {
+                            setTimeout(() => load(url), 1000)
+                        }
+                    }));
+        }
+
+        function send() {
+            const input = document.getElementById('text');
+            fetch('/api/tasks', {method: 'POST', body: input.value})
+                .then(response => {
+                    if (response.status === 202) {
+                        const location = response.headers.get('location');
+                        load(location);
+                    }
+                })
+            input.value = '';
+            input.focus();
+        }
+    </script>
+</head>
+
+<body>
+<div id="chat"></div>
+<label for="text">Text</label>
+<input id="text">
+<button id="send" onclick="send()">Send</button>
+</body>
+
+<script>
+    document.getElementById('text')
+        .addEventListener('keyup', (event) => {
+            if (event.key === "Enter") {
+                document.getElementById("send")
+                    .click();
+            }
+        });
+</script>
+
+</html>
